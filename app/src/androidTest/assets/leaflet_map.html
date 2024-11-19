@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map with Routing and Geolocation</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <!-- Leaflet Locate Control CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.74.0/dist/L.Control.Locate.min.css" />
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .search {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            z-index: 1001;
+            background-color: white;
+            width: 200px;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="map"></div>
+
+<!-- Search by Place Name -->
+<div class="search">
+    <input type="text" id="start-input" placeholder="Enter starting point" autocomplete="off">
+    <div class="suggestions" id="start-suggestions-list"></div>
+    <input type="text" id="end-input" placeholder="Enter ending point" autocomplete="off">
+    <div class="suggestions" id="end-suggestions-list"></div>
+    <button id="route-btn">Show Route</button>
+    <button id="clear-route-btn">Clear Route</button>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Leaflet Routing Machine JS -->
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+<!-- Leaflet Locate Control -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.74.0/dist/L.Control.Locate.min.js"></script>
+
+<script>
+    // Initialize the map
+    var map = L.map('map').setView([28.3949, 84.1240], 8);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Marker for current location
+    var marker = L.marker([28.3949, 84.1240]).addTo(map);
+
+    // Locate Control for geolocation
+    L.control.locate().addTo(map);
+
+    // Real-time geolocation tracking
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(function (position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+
+            marker.setLatLng([lat, lng]);
+            map.setView([lat, lng], 13);
+
+            // Optional circle to show accuracy
+            L.circle([lat, lng], { radius: position.coords.accuracy }).addTo(map);
+        });
+    }
+
+    // Routing Control
+    var control = L.Routing.control({
+        waypoints: [],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim() // Using Nominatim geocoder
+    }).addTo(map);
+
+    // Event listeners for start and end input suggestions
+    document.getElementById('start-input').addEventListener('input', function () {
+        fetchSuggestions(this.value, 'start');
+    });
+
+    document.getElementById('end-input').addEventListener('input', function () {
+        fetchSuggestions(this.value, 'end');
+    });
+
+    // Show route button functionality
+    document.getElementById('route-btn').addEventListener('click', function () {
+        var startPlace = document.getElementById('start-input').value;
+        var endPlace = document.getElementById('end-input').value;
+        searchRoute(startPlace, endPlace);
+    });
+
+    // Clear route button functionality
+    document.getElementById('clear-route-btn').addEventListener('click', function () {
+        control.setWaypoints([]);
+        control.spliceWaypoints(0, control.getWaypoints().length);
+        document.getElementById('start-input').value = '';
+        document.getElementById('end-input').value = '';
+        document.getElementById('start-suggestions-list').innerHTML = '';
+        document.getElementById('end-suggestions-list').innerHTML = '';
+        document.getElementById('start-suggestions-list').style.display = 'none';
+        document.getElementById('end-suggestions-list').style.display = 'none';
+
+        marker.setLatLng([28.3949, 84.1240]); // Reset marker position
+        map.setView([28.3949, 84.1240], 8); // Reset map view
+    });
+
+    // Fetch suggestions from Nominatim
+    function fetchSuggestions(place, type) {
+        if (place.length === 0) {
+            document.getElementById(`${type}-suggestions-list`).style.display = 'none';
+            return; // No input means no suggestions
+        }
+
+        var url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(place)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var suggestionsList = document.getElementById(`${type}-suggestions-list`);
+                suggestionsList.innerHTML = '';
+                data.forEach(item => {
+                    var div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerText = item.display_name;
+
+                    div.onclick = function () {
+                        document.getElementById(`${type}-input`).value = item.display_name; // Set input to selected suggestion
+                        suggestionsList.innerHTML = ''; // Clear suggestions
+                        suggestionsList.style.display = 'none'; // Hide suggestions
+                    };
+
+                    suggestionsList.appendChild(div);
+                });
+                if (data.length > 0) {
+                    suggestionsList.style.display = 'block'; // Show suggestions if any found
+                } else {
+                    suggestionsList.style.display = 'none'; // Hide if no suggestions found
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+   // Function to search route between start and end places
+   function searchRoute(start, end) {
+       var urlStart = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(start)}`;
+       var urlEnd = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(end)}`;
+
+       Promise.all([fetch(urlStart), fetch(urlEnd)])
+           .then(responses => Promise.all(responses.map(res => res.json())))
+           .then(data => {
+               if (data[0].length > 0 && data[1].length > 0) {
+                   var startLatLng = L.latLng(data[0][0].lat, data[0][0].lon);
+                   var endLatLng = L.latLng(data[1][0].lat, data[1][0].lon);
+
+                   // Set the route with the new starting and ending points
+                   control.setWaypoints([startLatLng, endLatLng]);
+
+                   // Move map view to the start location
+                   map.setView(startLatLng, 13);
+                   marker.setLatLng(startLatLng);
+                   marker.bindPopup(`<h3>Starting Point: ${data[0][0].display_name}</h3>`).openPopup();
+               } else {
+                   alert("One or both places not found.");
+               }
+           })
+           .catch(err => console.error(err));
+   }
+</script>
+</body>
+
+</html>

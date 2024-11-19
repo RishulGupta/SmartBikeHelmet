@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SmartBikeHelmet</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Maps</string>
+    <string name="title_notifications">Contacts</string>
+    <string name="open">Open Drawer</string>
+    <string name="close">Close Drawer</string>
+</resources>

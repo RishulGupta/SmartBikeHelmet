@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285474280614",
+    "project_id": "smartbikehelmet-a1b95",
+    "storage_bucket": "smartbikehelmet-a1b95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285474280614:android:5ae6d2ec5fc3266a871067",
+        "android_client_info": {
+          "package_name": "com.example.smartbikehelmet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn4j2INFLK1bdSBu-sQjbni6SP0x0ssY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
