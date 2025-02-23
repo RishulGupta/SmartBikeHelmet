@@ -66,5 +66,18 @@ The **Smart Bike Helmet** app combines cutting-edge **IoT** and **mobile technol
 - **Major Crashes**: Sends emergency SOS messages to pre-configured contacts, along with live location details.  
 
 ---  
+## 📲 User Interface
+
+![image](https://github.com/user-attachments/assets/787eb4e5-e172-4347-b3b2-59174a4d90aa)
+![image](https://github.com/user-attachments/assets/55639c02-bf99-4afa-a422-c374cc6578de)
+![image](https://github.com/user-attachments/assets/e1192ab4-90db-4849-b5c2-9c2c26493eb8)
+![image](https://github.com/user-attachments/assets/8b095078-7596-47f7-a26e-8ff62c524e2a)
+
+## ⚙️Hardware
+![image](https://github.com/user-attachments/assets/78cf851a-0bec-4a1d-b583-b4311d7d6ac8)
+
+
+
+
 
 
