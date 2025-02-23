@@ -3,44 +3,52 @@ package com.example.smartbikehelmet
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.smartbikehelmet.databinding.ActivityLoginBinding
-import com.example.smartbikehelmet.ui.home.HomeFragment
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(binding.root)
+
         binding.apply {
-            submit.setOnClickListener{
-                var email:String=editTextTextEmailAddress.text.toString()
-                var password:String=editTextTextPassword.text.toString()
-                Firebase.auth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
-                    if(it.isSuccessful)
-                    {
-                        //startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        val intent = Intent(this@LoginActivity,HomeFragment::class.java)
+            submit.setOnClickListener {
+                val email = editTextTextEmailAddress.text.toString().trim()
+                val password = editTextTextPassword.text.toString().trim()
 
-                        this@LoginActivity.startActivity(intent)
-                        this@LoginActivity.finish()
-                        Toast.makeText(this@LoginActivity, "Login Successful", Toast.LENGTH_SHORT).show()
-
-                    }
-                    else
-                    {
-                        Toast.makeText(this@LoginActivity, it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
-                    }
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Email and Password cannot be empty",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
                 }
+
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "Login Successful",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this@LoginActivity,
+                                task.exception?.localizedMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
             }
         }
     }

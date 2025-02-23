@@ -2,6 +2,7 @@ package com.example.smartbikehelmet
 
 import Contact
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smartbikehelmet.ui.home.HomeFragment
 import com.google.firebase.database.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -40,6 +42,11 @@ class AddEmergencyContactActivity : AppCompatActivity() {
         val etContactNumber = findViewById<EditText>(R.id.etContactNumber)
         val btnAddContact = findViewById<Button>(R.id.btnAddContact)
         val btnSendSOS = findViewById<Button>(R.id.btnSendSOS)
+        val homeButton=findViewById<Button>(R.id.button2)
+        homeButton.setOnClickListener {
+            startActivity(Intent(this, HomeFragment::class.java))
+        }
+
         val rvContacts = findViewById<RecyclerView>(R.id.rvContacts)
 
         rvContacts.layoutManager = LinearLayoutManager(this)
@@ -51,6 +58,7 @@ class AddEmergencyContactActivity : AppCompatActivity() {
         loadContactsFromFirebase()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
 
         btnAddContact.setOnClickListener {
             val name = etContactName.text.toString()

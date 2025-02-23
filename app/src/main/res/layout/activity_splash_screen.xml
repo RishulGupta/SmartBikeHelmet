@@ -5,14 +5,16 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashScreenActivity">
-
+    tools:context=".SplashScreenActivity"
+    android:background="@color/black">
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="471dp"
-        android:layout_height="1028dp"
-        android:layout_marginStart="60dp"
+        android:layout_width="544dp"
+        android:layout_height="921dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/common_google_signin_btn_text_light_normal" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hed" />
 </androidx.constraintlayout.widget.ConstraintLayout>

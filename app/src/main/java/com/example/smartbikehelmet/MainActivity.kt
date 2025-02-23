@@ -2,6 +2,7 @@ package com.example.smartbikehelmet
 
 import Contact
 import android.Manifest
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -27,6 +29,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.smartbikehelmet.databinding.ActivityMainBinding
+import com.example.smartbikehelmet.ui.home.HomeFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.*
@@ -36,7 +39,7 @@ import java.lang.StrictMath.sqrt
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
-
+    private var womenHelplineNumber="9212548716"
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
@@ -102,6 +105,18 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
+            //R.id.nav_locator->{
+            //    startActivity(Intent(this, HelmetLocatorActivity::class.java))
+           //     Toast.makeText(this, "Locator clicked", Toast.LENGTH_SHORT).show()
+           //     drawerLayout.closeDrawer(GravityCompat.START)
+            //    return true
+           // }
+            R.id.nav_home->{
+              //  startActivity(Intent(this, HomeFragment::class.java))
+                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return true
+            }
 
             else -> return false
         }
@@ -155,6 +170,14 @@ class MainActivity : AppCompatActivity() {
             requestPermissions()
         }
     }
+    private fun sendSOSMessage2() {
+        if (checkPermissions()) {
+            sendSOSToAllContactsAndWomenHelpline()
+        } else {
+            requestPermissions()
+        }
+    }
+
 
     private fun checkPermissions(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -221,6 +244,62 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to retrieve location", Toast.LENGTH_SHORT).show()
         }
     }
+    private fun sendSOSToAllContactsAndWomenHelpline() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                val sosMessage =
+                    "SOS! I need help women. Location: https://maps.google.com/?q=${location.latitude},${location.longitude}"
+                val smsManager = SmsManager.getDefault()
+
+                // Send SOS to each emergency contact
+                for (contact in contactList) {
+                    try {
+                        Log.d("SOS", "Sending SOS to contact: $contact")
+                        smsManager.sendTextMessage(contact.phone, null, sosMessage, null, null)
+                    } catch (e: Exception) {
+                        Log.e("SOS", "Failed to send SMS to contact $contact", e)
+                    }
+                }
+
+                // Send SOS to women helpline
+                try {
+                    Log.d("SOS", "Sending SOS to women helpline: $womenHelplineNumber")
+                    smsManager.sendTextMessage(womenHelplineNumber, null, sosMessage, null, null)
+                } catch (e: Exception) {
+                    Log.e("SOS", "Failed to send SMS to women helpline $womenHelplineNumber", e)
+                }
+
+                Toast.makeText(this, "SOS sent to all contacts and women helpline", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(this, "Unable to get location", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Log.e("SOS", "Failed to get location", it)
+            Toast.makeText(this, "Failed to retrieve location", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun showWomenSosDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Women Safety SOS")
+            .setMessage("Are you sure you want to call the women safety helpline?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                sendSOSMessage2()
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     fun sendCheckInNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -279,7 +358,7 @@ class MainActivity : AppCompatActivity() {
         // Reference the path in Firebase where accelerometer data and button state are stored
         val accelerometerRef = databaseSensor.child("accelerometer")
         val buttonStateRef = databaseSensor.child("buttonState")
-
+val buttonStateWomen=databaseSensor.child("buttonState2")
         // Monitor accelerometer data changes
         accelerometerRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -301,6 +380,16 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Firebase", "Failed to read button state", error.toException())
             }
         })
+        buttonStateWomen.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                handleWomenButtonState(snapshot)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Failed to read button state", error.toException())
+            }
+        })
+
     }
 
     private fun handleAccelerometerData(snapshot: DataSnapshot) {
@@ -340,6 +429,19 @@ class MainActivity : AppCompatActivity() {
             // Send SOS if button state is 1
             Toast.makeText(this@MainActivity, "Button pressed, sending SOS!", Toast.LENGTH_SHORT).show()
             sendSOS() // Uncomment to send SOS if needed
+        }
+    }
+    private fun handleWomenButtonState(snapshot: DataSnapshot) {
+        val buttonState2 = snapshot.getValue(Float::class.java) ?: 0.0f
+
+        if (buttonState2 == 1.0f) {
+            // Send SOS if button state is 1
+            Toast.makeText(this@MainActivity, "Women safety Button pressed, sending SOS!", Toast.LENGTH_SHORT).show()
+            sendSOSMessage2() // Uncomment to send SOS if needed
+        }
+        else
+        {
+            //Toast.makeText(this@MainActivity, "Women safety Button not pressed", Toast.LENGTH_SHORT).show()
         }
     }
 

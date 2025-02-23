@@ -5,4 +5,5 @@
     <string name="title_notifications">Contacts</string>
     <string name="open">Open Drawer</string>
     <string name="close">Close Drawer</string>
+    <string name="delete_contact">Delete Contact</string>  <!-- New string for delete contact -->
 </resources>

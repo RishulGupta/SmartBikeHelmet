@@ -3,40 +3,97 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/black">
 
-    <!-- Contact input -->
-    <EditText
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <EditText
         android:id="@+id/etContactName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Contact Name" />
+        android:hint="Contact Name"
+        android:background="@drawable/rounded_background"
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:fontFamily="sans-serif"
+        android:textSize="14sp"
+        android:inputType="textPersonName"
+        android:textColorHint="@color/light_gray"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:drawablePadding="8dp"
+        android:paddingStart="40dp"
+            android:drawableTint="@color/white" />
 
-    <EditText
-        android:id="@+id/etContactNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:hint="Phone Number" />
+        <EditText
+            android:id="@+id/etContactNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:background="@drawable/rounded_background"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:textColorHint="@color/light_gray"
+            android:drawableStart="@drawable/baseline_call_24"
+            android:drawablePadding="8dp"
+            android:paddingStart="40dp"
+             />
 
-    <Button
-        android:id="@+id/btnAddContact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#F8F5F5"
-        android:backgroundTint="#75CA45"
-        android:text="Add Contact" />
+        <Button
+            android:id="@+id/btnAddContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:paddingVertical="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Add Contact"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:elevation="6dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
-    <!-- RecyclerView to display the contacts -->
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvContacts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingVertical="8dp" />
 
-    <!-- SOS Button to send SMS to all contacts -->
+    <!-- SOS Button -->
     <Button
         android:id="@+id/btnSendSOS"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send SOS"/>
+        android:backgroundTint="@color/sos_red"
+        android:paddingVertical="12dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Send SOS"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:elevation="6dp"
+        android:layout_marginTop="16dp" />
+
+    <!-- Home Button -->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue"
+        android:paddingVertical="12dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Home"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:elevation="6dp"
+        android:layout_marginTop="8dp" />
 </LinearLayout>
