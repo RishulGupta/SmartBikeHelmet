@@ -81,7 +81,9 @@ The **Smart Bike Helmet** app combines cutting-edge **IoT** and **mobile technol
 
 
 ## ⚙️Hardware
-![image](https://github.com/user-attachments/assets/78cf851a-0bec-4a1d-b583-b4311d7d6ac8)
+<img src="https://github.com/user-attachments/assets/62a790f6-6766-4af7-baef-b0b53ec076b0" width="300"/>
+
+
 
 
 
