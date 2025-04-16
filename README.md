@@ -67,11 +67,16 @@ The **Smart Bike Helmet** app combines cutting-edge **IoT** and **mobile technol
 
 ---  
 ## 📲 User Interface
+<img src="https://github.com/user-attachments/assets/eaeb3a21-23f5-4c0a-8283-55f6e3c33d4b" width="300"/>
 
-![image](https://github.com/user-attachments/assets/787eb4e5-e172-4347-b3b2-59174a4d90aa)
-![image](https://github.com/user-attachments/assets/55639c02-bf99-4afa-a422-c374cc6578de)
-![image](https://github.com/user-attachments/assets/e1192ab4-90db-4849-b5c2-9c2c26493eb8)
-![image](https://github.com/user-attachments/assets/8b095078-7596-47f7-a26e-8ff62c524e2a)
+<img src="https://github.com/user-attachments/assets/1d762eb9-4722-4d4a-89a8-a2220d6c77ed" width="300"/>
+
+<img src="https://github.com/user-attachments/assets/9f757736-0e57-4af8-8b8b-6dd6b4985421" width="300"/>
+
+
+<img src="https://github.com/user-attachments/assets/e1192ab4-90db-4849-b5c2-9c2c26493eb8" width="300"/>
+<img src="https://github.com/user-attachments/assets/8b095078-7596-47f7-a26e-8ff62c524e2a" width="300"/>
+
 
 ## ⚙️Hardware
 ![image](https://github.com/user-attachments/assets/78cf851a-0bec-4a1d-b583-b4311d7d6ac8)
